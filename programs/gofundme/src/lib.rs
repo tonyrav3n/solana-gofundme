@@ -1,21 +1,36 @@
+use anchor_lang::prelude::*;
 pub mod constants;
-pub mod error;
+pub mod errors;
 pub mod instructions;
 pub mod state;
 
-use anchor_lang::prelude::*;
+use instructions::*;
 
-pub use constants::*;
-pub use instructions::*;
-pub use state::*;
-
-declare_id!("9tgePyfBvvwE4LZbJ5t4TunpkQK6bLnTcT7T6ap1RJUr");
+declare_id!("DqFsjUeJduCUGx9PiGAdTgReRyU1oRfEX5jMctXcHCC8");
 
 #[program]
 pub mod gofundme {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn initialize_fundraiser(
+        ctx: Context<InitializeFundraiser>,
+        fundraiser_index: u8,
+        title: String,
+        description: String,
+        goal_amount: u64,
+        deadline: i64,
+    ) -> Result<()> {
+        instructions::initialize_fundraiser::initialize_fundraiser(
+            ctx,
+            fundraiser_index,
+            title,
+            description,
+            goal_amount,
+            deadline,
+        )
+    }
+
+    pub fn donate(ctx: Context<Donate>, amount: u64) -> Result<()> {
+        instructions::donate::donate(ctx, amount)
     }
 }

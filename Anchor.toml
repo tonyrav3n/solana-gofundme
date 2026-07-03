@@ -6,13 +6,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-gofundme = "9tgePyfBvvwE4LZbJ5t4TunpkQK6bLnTcT7T6ap1RJUr"
+gofundme = "DqFsjUeJduCUGx9PiGAdTgReRyU1oRfEX5jMctXcHCC8"
 
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "cargo test"
+test = "cargo test --manifest-path tests/Cargo.toml -- --test-threads=1"
 
 [hooks]

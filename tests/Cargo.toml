@@ -1,0 +1,11 @@
+[package]
+name = "gofundme-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anchor-lang = "1.0.1"
+anchor-litesvm = "0.4.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))', 'cfg(feature, values("idl-build"))'] }
