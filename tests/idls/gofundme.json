@@ -171,6 +171,147 @@
           "type": "i64"
         }
       ]
+    },
+    {
+      "name": "process_refunds",
+      "discriminator": [
+        48,
+        71,
+        147,
+        50,
+        208,
+        8,
+        196,
+        155
+      ],
+      "accounts": [
+        {
+          "name": "fundraiser",
+          "writable": true,
+          "relations": [
+            "donation"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fundraiser"
+              }
+            ]
+          }
+        },
+        {
+          "name": "donation",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  111,
+                  110,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fundraiser"
+              },
+              {
+                "kind": "arg",
+                "path": "donor"
+              }
+            ]
+          }
+        },
+        {
+          "name": "donor_account",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "donor",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "fundraiser"
+          ]
+        },
+        {
+          "name": "fundraiser",
+          "writable": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fundraiser"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -246,6 +387,31 @@
       "code": 6008,
       "name": "MathOverflow",
       "msg": "Math overflow occurred"
+    },
+    {
+      "code": 6009,
+      "name": "NotCreator",
+      "msg": "Only the creator can withdraw funds"
+    },
+    {
+      "code": 6010,
+      "name": "InsufficientVaultBalance",
+      "msg": "Insufficient balance in the vault"
+    },
+    {
+      "code": 6011,
+      "name": "NotAbandoned",
+      "msg": "Campaign is not yet abandoned (must wait 7 days after deadline)"
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyRefunded",
+      "msg": "Donation already refunded"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidDonor",
+      "msg": "Donor account mismatch"
     }
   ],
   "types": [

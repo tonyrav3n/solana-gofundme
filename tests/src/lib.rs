@@ -7,3 +7,9 @@ mod test_initialize_fundraiser;
 
 #[cfg(test)]
 mod test_donate;
+
+#[cfg(test)]
+mod test_withdraw;
+
+#[cfg(test)]
+mod test_process_refunds;

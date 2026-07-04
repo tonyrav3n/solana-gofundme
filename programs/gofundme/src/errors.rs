@@ -28,4 +28,19 @@ pub enum ErrorCode {
 
     #[msg("Math overflow occurred")]
     MathOverflow,
+
+    #[msg("Only the creator can withdraw funds")]
+    NotCreator,
+
+    #[msg("Insufficient balance in the vault")]
+    InsufficientVaultBalance,
+
+    #[msg("Campaign is not yet abandoned (must wait 7 days after deadline)")]
+    NotAbandoned,
+
+    #[msg("Donation already refunded")]
+    AlreadyRefunded,
+
+    #[msg("Donor account mismatch")]
+    InvalidDonor,
 }

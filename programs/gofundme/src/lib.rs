@@ -33,4 +33,15 @@ pub mod gofundme {
     pub fn donate(ctx: Context<Donate>, amount: u64) -> Result<()> {
         instructions::donate::donate(ctx, amount)
     }
+
+    pub fn withdraw(ctx: Context<Withdraw>) -> Result<()> {
+        instructions::withdraw::withdraw(ctx)
+    }
+
+    pub fn process_refunds(
+        ctx: Context<ProcessRefunds>,
+        donor: Pubkey,
+    ) -> Result<()> {
+        instructions::process_refunds::process_refunds(ctx, donor)
+    }
 }
