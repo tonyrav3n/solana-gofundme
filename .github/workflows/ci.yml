@@ -1,0 +1,72 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache Cargo Registry & Target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Setup Solana Toolchain
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/v4.0.2/install)"
+          echo "/home/runner/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+
+      - name: Setup Solana Keypair
+        run: |
+          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
+          solana-keygen new --no-bip39-passphrase --force
+
+      - name: Build Smart Contract (bypass anchor-cli)
+        run: |
+          export PATH="/home/runner/.local/share/solana/install/active_release/bin:$PATH"
+          cargo build-sbf --manifest-path programs/gofundme/Cargo.toml
+
+      - name: Verify committed IDL
+        # anchor_lang::declare_program!(gofundme) in tests/src/lib.rs reads
+        # tests/idls/gofundme.json, which is committed to the repo (generated
+        # locally via `anchor idl build -o tests/idls/gofundme.json
+        # --skip-lint`) rather than regenerated in CI. This avoids needing
+        # anchor-cli here at all. This step just fails fast with a clear
+        # message if the file is missing or malformed, instead of a cryptic
+        # macro-expansion error later.
+        run: |
+          python3 -c "
+          import json
+          with open('tests/idls/gofundme.json') as f:
+              idl = json.load(f)
+          instructions = [i['name'] for i in idl['instructions']]
+          print(f\"IDL OK: {len(instructions)} instruction(s): {instructions}\")
+          "
+
+      - name: Run Cargo Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Run LiteSVM Tests
+        run: cargo test --manifest-path tests/Cargo.toml -- --test-threads=1
